@@ -1,5 +1,3 @@
-"use client";
-
 const TextBox = ({
   type,
   text,
