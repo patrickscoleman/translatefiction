@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
-
-const TextBox = ({ type }: { type: "source" | "target" }) => {
-  const [text, setText] = useState("");
-
+const TextBox = ({
+  type,
+  text,
+  setText,
+}: {
+  type: "source" | "target";
+  text: string;
+  setText: (text: string) => void;
+}) => {
   return (
     <div className="flex flex-col flex-1">
       <textarea
