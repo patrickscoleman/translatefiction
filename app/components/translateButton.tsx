@@ -1,11 +1,14 @@
+"use client";
+
 const TranslateButton = ({
-  sourceText,
-  setTargetText,
+  handleTranslate,
 }: {
-  sourceText: string;
-  setTargetText: (text: string) => void;
+  handleTranslate: () => void;
 }) => (
-  <button className="px-8 py-4 bg-blue-500 text-white font-bold rounded-lg text-lg self-end mt-auto">
+  <button
+    className="px-8 py-4 bg-blue-500 text-white font-bold rounded-lg text-lg self-end mt-auto"
+    onClick={handleTranslate}
+  >
     TRANSLATE
   </button>
 );
