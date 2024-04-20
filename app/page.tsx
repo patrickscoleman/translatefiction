@@ -4,17 +4,17 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
-import TextBox from "./components/textBox";
-import TranslateButton from "./components/translateButton";
-import { TranslationText } from "./lib/validators/translationText";
+import TextBox from "@/app/components/textBox";
+import TranslateButton from "@/app/components/translateButton";
+import { Message } from "@/app/lib/validators/message";
 
 export default function Home() {
   const [sourceText, setSourceText] = useState("");
   const [targetText, setTargetText] = useState("");
 
-  const { mutate: translate, isPending } = useMutation({
-    mutationFn: async (translationText: TranslationText) => {
-      const response = await fetch("/api/translate", {
+  const { mutate: sendMessage, isPending } = useMutation({
+    mutationFn: async (message: Message) => {
+      const response = await fetch("/api/message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,13 +30,13 @@ export default function Home() {
   });
 
   const handleTranslate = () => {
-    const text = {
+    const message = {
       id: nanoid(),
       isSource: true,
       text: sourceText,
     };
 
-    translate(text);
+    sendMessage(message);
   };
 
   return (
