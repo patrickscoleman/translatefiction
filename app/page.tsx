@@ -20,7 +20,7 @@ export default function Home() {
     setIsMessageUpdating,
   } = useContext(MessagesContext);
 
-  const { mutate: sendMessage, isPending } = useMutation({
+  const { mutate: sendMessage } = useMutation({
     mutationFn: async (message: Message) => {
       setIsMessageUpdating(true);
       const response = await fetch("/api/message", {
@@ -39,6 +39,7 @@ export default function Home() {
       const id = nanoid();
       const responseMessage: Message = {
         id,
+        messageType: "translation",
         isSource: false,
         text: "",
       };
@@ -63,10 +64,11 @@ export default function Home() {
   });
 
   const handleTranslate = () => {
-    const message = {
+    const message: Message = {
       id: nanoid(),
+      messageType: "translation",
       isSource: true,
-      text: sourceText,
+      text: `Please translate the following text to English. If you receive a message in English, please ask the user to enter text in another language to translate. Text: ${sourceText}`,
     };
 
     sendMessage(message);

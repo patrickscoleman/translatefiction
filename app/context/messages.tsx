@@ -23,8 +23,9 @@ export function MessagesProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: nanoid(),
+      messageType: "translation",
       isSource: false,
-      text: "Hello!",
+      text: "Editable translation appears here...",
     },
   ]);
   const addMessage = (message: Message) => {

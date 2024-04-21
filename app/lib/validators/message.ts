@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const MessageSchema = z.object({
   id: z.string(),
+  messageType: z.string(),
   isSource: z.boolean(),
   text: z.string(),
 });
