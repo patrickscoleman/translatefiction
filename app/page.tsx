@@ -7,6 +7,7 @@ import { nanoid } from "nanoid";
 import TextBox from "@/app/components/textBox";
 import ExplanationBox from "@/app/components/explanationBox";
 import TranslateButton from "@/app/components/translateButton";
+import ExplainButton from "@/app/components/explainButton";
 import { Message } from "@/app/lib/validators/message";
 import { MessagesContext } from "@/app/context/messages";
 
@@ -58,7 +59,11 @@ export default function Home() {
         done = doneReading;
         const chunkValue = decoder.decode(value);
         updateMessage(id, (prev) => prev + chunkValue);
-        setTargetText((prev) => prev + chunkValue);
+        if (responseMessage.messageType === "translation") {
+          setTargetText((prev) => prev + chunkValue);
+        } else if (responseMessage.messageType === "explanation") {
+          setExplanation((prev) => prev + chunkValue);
+        }
       }
 
       // clean up
@@ -94,6 +99,17 @@ export default function Home() {
     };
   }, []); // Empty dependency array means this effect runs once on mount
 
+  const handleExplain = () => {
+    const message: Message = {
+      id: nanoid(),
+      messageType: "explanation",
+      isSource: true,
+      text: `Please provide all possible translations of the following word or phrase in English. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
+    };
+
+    sendMessage(message);
+  };
+
   return (
     <main className="flex flex-col min-h-screen p-8 overflow-hidden max-w-6xl mx-auto w-full">
       <h1 className="text-4xl font-bold mb-8 self-start">Translate Fiction</h1>
@@ -107,7 +123,10 @@ export default function Home() {
           <ExplanationBox type="explanation" text={explanation} />
         </div>
       </div>
-      <TranslateButton handleTranslate={handleTranslate} />
+      <div className="flex justify-end space-x-4">
+        <ExplainButton handleExplain={handleExplain} />
+        <TranslateButton handleTranslate={handleTranslate} />
+      </div>
     </main>
   );
 }
