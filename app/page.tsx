@@ -22,6 +22,7 @@ export default function Home() {
 
   const { mutate: sendMessage, isPending } = useMutation({
     mutationFn: async (message: Message) => {
+      setIsMessageUpdating(true);
       const response = await fetch("/api/message", {
         method: "POST",
         headers: {
