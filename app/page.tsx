@@ -1,10 +1,11 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
 import TextBox from "@/app/components/textBox";
+import ExplanationBox from "@/app/components/explanationBox";
 import TranslateButton from "@/app/components/translateButton";
 import { Message } from "@/app/lib/validators/message";
 import { MessagesContext } from "@/app/context/messages";
@@ -12,6 +13,8 @@ import { MessagesContext } from "@/app/context/messages";
 export default function Home() {
   const [sourceText, setSourceText] = useState("");
   const [targetText, setTargetText] = useState("");
+  const [highlight, setHighlight] = useState("");
+  const [explanation, setExplanation] = useState("");
   const {
     messages,
     addMessage,
@@ -74,12 +77,35 @@ export default function Home() {
     sendMessage(message);
   };
 
+  useEffect(() => {
+    const handleMouseUp = () => {
+      if (typeof window !== "undefined") {
+        const selectedText = window?.getSelection()?.toString();
+        if (selectedText && selectedText.length > 0) {
+          setHighlight(selectedText);
+        }
+      }
+    };
+
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []); // Empty dependency array means this effect runs once on mount
+
   return (
     <main className="flex flex-col min-h-screen p-8 overflow-hidden max-w-6xl mx-auto w-full">
       <h1 className="text-4xl font-bold mb-8 self-start">Translate Fiction</h1>
       <div className="flex flex-1 flex-col lg:flex-row gap-4 mb-4 w-full">
-        <TextBox type="source" text={sourceText} setText={setSourceText} />
-        <TextBox type="target" text={targetText} setText={setTargetText} />
+        <div className="flex flex-1 flex-col w-full">
+          <TextBox type="source" text={sourceText} setText={setSourceText} />
+          <ExplanationBox type="highlight" text={highlight} />
+        </div>
+        <div className="flex flex-1 flex-col w-full">
+          <TextBox type="target" text={targetText} setText={setTargetText} />
+          <ExplanationBox type="explanation" text={explanation} />
+        </div>
       </div>
       <TranslateButton handleTranslate={handleTranslate} />
     </main>

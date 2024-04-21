@@ -19,7 +19,7 @@ const TextBox = ({
             : "Editable translation appears here..."
         }
       ></textarea>
-      <p className="mt-2">
+      <p className="my-2">
         {type === "source" ? "Language: none detected" : "Language: English"}
       </p>
     </div>
