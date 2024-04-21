@@ -1,16 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
 import TextBox from "@/app/components/textBox";
 import TranslateButton from "@/app/components/translateButton";
 import { Message } from "@/app/lib/validators/message";
+import { MessagesContext } from "@/app/context/messages";
 
 export default function Home() {
   const [sourceText, setSourceText] = useState("");
   const [targetText, setTargetText] = useState("");
+  const {
+    messages,
+    addMessage,
+    removeMessage,
+    updateMessage,
+    setIsMessageUpdating,
+  } = useContext(MessagesContext);
 
   const { mutate: sendMessage, isPending } = useMutation({
     mutationFn: async (message: Message) => {
@@ -27,6 +35,15 @@ export default function Home() {
     onSuccess: async (stream) => {
       if (!stream) throw new Error("No stream found");
 
+      const id = nanoid();
+      const responseMessage: Message = {
+        id,
+        isSource: false,
+        text: "",
+      };
+
+      addMessage(responseMessage);
+
       const reader = stream.getReader();
       const decoder = new TextDecoder();
       let done = false;
@@ -35,8 +52,12 @@ export default function Home() {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
-        console.log("chunkValue", chunkValue);
+        updateMessage(id, (prev) => prev + chunkValue);
+        setTargetText((prev) => prev + chunkValue);
       }
+
+      // clean up
+      setIsMessageUpdating(false);
     },
   });
 
