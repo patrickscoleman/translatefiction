@@ -35,15 +35,15 @@ export default function Home() {
         body: JSON.stringify({ messages: [message] }),
       });
 
-      return response.body;
+      return { stream: response.body, message };
     },
-    onSuccess: async (stream) => {
+    onSuccess: async ({ stream, message }) => {
       if (!stream) throw new Error("No stream found");
 
       const id = nanoid();
       const responseMessage: Message = {
         id,
-        messageType: "translation",
+        messageType: message.messageType,
         isSource: false,
         text: "",
       };
@@ -72,6 +72,8 @@ export default function Home() {
   });
 
   const handleTranslate = () => {
+    setTargetText("");
+
     const message: Message = {
       id: nanoid(),
       messageType: "translation",
@@ -100,6 +102,8 @@ export default function Home() {
   }, []); // Empty dependency array means this effect runs once on mount
 
   const handleExplain = () => {
+    setExplanation("");
+
     const message: Message = {
       id: nanoid(),
       messageType: "explanation",
@@ -116,11 +120,19 @@ export default function Home() {
       <div className="flex flex-1 flex-col lg:flex-row gap-4 mb-4 w-full">
         <div className="flex flex-1 flex-col w-full">
           <TextBox type="source" text={sourceText} setText={setSourceText} />
-          <ExplanationBox type="highlight" text={highlight} />
+          <ExplanationBox
+            type="highlight"
+            text={highlight}
+            setText={setHighlight}
+          />
         </div>
         <div className="flex flex-1 flex-col w-full">
           <TextBox type="target" text={targetText} setText={setTargetText} />
-          <ExplanationBox type="explanation" text={explanation} />
+          <ExplanationBox
+            type="explanation"
+            text={explanation}
+            setText={setExplanation}
+          />
         </div>
       </div>
       <div className="flex justify-end space-x-4">

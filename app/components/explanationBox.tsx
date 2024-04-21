@@ -1,15 +1,17 @@
 const ExplanationBox = ({
   type,
   text,
+  setText,
 }: {
   type: "highlight" | "explanation";
   text: string;
+  setText: (text: string) => void;
 }) => {
   return (
     <textarea
-      readOnly={true}
       className="bg-gray-800 text-white border-none p-4 h-14 flex-grow-0 overflow-auto rounded-md w-full resize-none"
       value={text}
+      onChange={(e) => setText(e.target.value)}
       placeholder={
         type === "highlight"
           ? "Highlight text..."
