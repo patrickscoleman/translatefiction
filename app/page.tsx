@@ -93,19 +93,19 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const handleMouseUp = () => {
+    const handleSelectionChange = () => {
       if (typeof window !== "undefined") {
-        const selectedText = window?.getSelection()?.toString();
+        const selectedText = window.getSelection()?.toString();
         if (selectedText && selectedText.length > 0) {
           setHighlight(selectedText);
         }
       }
     };
 
-    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("selectionchange", handleSelectionChange);
 
     return () => {
-      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("selectionchange", handleSelectionChange);
     };
   }, []); // Empty dependency array means this effect runs once on mount
 
