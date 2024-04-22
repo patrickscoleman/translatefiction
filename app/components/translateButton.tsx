@@ -18,7 +18,7 @@ const TranslateButton = ({
       onClick={handleTranslate}
       disabled={isMessageUpdating}
     >
-      TRANSLATE
+      TRANSLATE<span className="hidden ml-1 md:inline">⌘↵</span>
     </button>
   );
 };

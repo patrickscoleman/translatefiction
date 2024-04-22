@@ -14,7 +14,7 @@ const ExplainButton = ({ handleExplain }: { handleExplain: () => void }) => {
       onClick={handleExplain}
       disabled={isMessageUpdating}
     >
-      EXPLAIN
+      EXPLAIN<span className="hidden ml-1 md:inline">⌘\</span>
     </button>
   );
 };

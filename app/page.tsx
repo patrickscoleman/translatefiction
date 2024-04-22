@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
@@ -72,7 +72,7 @@ export default function Home() {
     },
   });
 
-  const handleTranslate = () => {
+  const handleTranslate = useCallback(() => {
     setTargetText("");
 
     const message: Message = {
@@ -83,14 +83,27 @@ export default function Home() {
     };
 
     sendMessage(message);
-  };
+  }, [sourceText, sendMessage]);
 
-  const handleClear = () => {
+  const handleExplain = useCallback(() => {
+    setExplanation("");
+
+    const message: Message = {
+      id: nanoid(),
+      messageType: "explanation",
+      isSource: true,
+      text: `Please provide all possible translations of the following word or phrase in English. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
+    };
+
+    sendMessage(message);
+  }, [highlight, sendMessage]);
+
+  const handleClear = useCallback(() => {
     setSourceText("");
     setTargetText("");
     setHighlight("");
     setExplanation("");
-  };
+  }, []);
 
   useEffect(() => {
     const handleSelectionChange = () => {
@@ -102,25 +115,24 @@ export default function Home() {
       }
     };
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter" && event.metaKey) {
+        handleTranslate();
+      } else if (event.key === "\\" && event.metaKey) {
+        handleExplain();
+      } else if (event.key === "Backspace" && event.shiftKey && event.metaKey) {
+        handleClear();
+      }
+    };
+
     document.addEventListener("selectionchange", handleSelectionChange);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
       document.removeEventListener("selectionchange", handleSelectionChange);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []); // Empty dependency array means this effect runs once on mount
-
-  const handleExplain = () => {
-    setExplanation("");
-
-    const message: Message = {
-      id: nanoid(),
-      messageType: "explanation",
-      isSource: true,
-      text: `Please provide all possible translations of the following word or phrase in English. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
-    };
-
-    sendMessage(message);
-  };
+  }, [handleTranslate, handleExplain, handleClear]);
 
   return (
     <main className="flex flex-col min-h-screen p-8 overflow-hidden max-w-6xl mx-auto w-full">
@@ -144,7 +156,9 @@ export default function Home() {
         </div>
       </div>
       <div className="flex justify-end space-x-4">
-        <ClearButton handleClear={handleClear} />
+        <div className="hidden md:inline">
+          <ClearButton handleClear={handleClear} />
+        </div>
         <ExplainButton handleExplain={handleExplain} />
         <TranslateButton handleTranslate={handleTranslate} />
       </div>
