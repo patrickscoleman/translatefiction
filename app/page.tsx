@@ -100,9 +100,7 @@ export default function Home() {
     setExplanation("");
 
     const highlightLanguage = await detectLanguage(highlight);
-    const highlightLanguageName = getLanguageName(highlightLanguage);
-    console.log("highlightLanguageName", highlightLanguageName);
-    const isHighlightNotEnglish = highlightLanguageName !== "English";
+    const isHighlightNotEnglish = highlightLanguage !== "en";
 
     const message: Message = isHighlightNotEnglish
       ? {

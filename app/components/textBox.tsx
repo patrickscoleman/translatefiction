@@ -1,8 +1,5 @@
 import { useEffect } from "react";
-import {
-  detectLanguage,
-  getLanguageName,
-} from "@/app/helpers/languageDetector";
+import { detectLanguage } from "@/app/helpers/languageDetector";
 
 const TextBox = ({
   type,
@@ -23,8 +20,7 @@ const TextBox = ({
         if (text) {
           const sampleText = text.substring(0, 100);
           const detectedLanguage = await detectLanguage(sampleText);
-          const languageName = getLanguageName(detectedLanguage);
-          setLanguage(languageName);
+          setLanguage(detectedLanguage);
         } else {
           setLanguage("none detected");
         }

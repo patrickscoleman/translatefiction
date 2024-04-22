@@ -2,8 +2,12 @@ import { franc, francAll } from "franc";
 import * as langs from "langs";
 
 export const detectLanguage = (text: string) => {
-  const languageCode = franc(text);
-  return languageCode;
+  const languageCode = detectLanguageCode(text);
+  return getLanguageName(languageCode);
+};
+
+export const detectLanguageCode = (text: string) => {
+  return franc(text);
 };
 
 export const getLanguageName = (code: string): string => {
