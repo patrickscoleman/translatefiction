@@ -17,6 +17,7 @@ export default function Home() {
   const [targetText, setTargetText] = useState("");
   const [highlight, setHighlight] = useState("");
   const [explanation, setExplanation] = useState("");
+  const abortControllerRef = useRef<AbortController | null>(null);
   const {
     messages,
     addMessage,
@@ -28,12 +29,15 @@ export default function Home() {
   const { mutate: sendMessage } = useMutation({
     mutationFn: async (message: Message) => {
       setIsMessageUpdating(true);
+      abortControllerRef.current = new AbortController();
+      const { signal } = abortControllerRef.current;
       const response = await fetch("/api/message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ messages: [message] }),
+        signal,
       });
 
       return { stream: response.body, message };
@@ -55,7 +59,7 @@ export default function Home() {
       const decoder = new TextDecoder();
       let done = false;
 
-      while (!done) {
+      while (!done && !abortControllerRef.current?.signal.aborted) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         const chunkValue = decoder.decode(value);
@@ -103,7 +107,10 @@ export default function Home() {
     setTargetText("");
     setHighlight("");
     setExplanation("");
-  }, []);
+
+    abortControllerRef.current?.abort();
+    setIsMessageUpdating(false);
+  }, [setIsMessageUpdating]);
 
   useEffect(() => {
     const handleSelectionChange = () => {
