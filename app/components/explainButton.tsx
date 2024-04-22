@@ -9,8 +9,10 @@ const ExplainButton = ({ handleExplain }: { handleExplain: () => void }) => {
   return (
     <button
       className={`px-8 py-4 ${
-        isMessageUpdating ? "bg-gray-400" : "bg-indigo-500"
-      } text-white font-bold rounded-lg text-lg self-end mt-auto`}
+        isMessageUpdating
+          ? "bg-gray-400 hover:bg-gray-400"
+          : "bg-indigo-500 hover:bg-indigo-400"
+      } text-white font-bold rounded-lg text-lg self-end mt-auto transition-colors duration-150`}
       onClick={handleExplain}
       disabled={isMessageUpdating}
     >
