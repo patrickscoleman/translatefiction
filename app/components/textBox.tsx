@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { detectLanguage, getLanguageName } from "../helpers/languageDetector";
+
 const TextBox = ({
   type,
   text,
@@ -7,6 +10,25 @@ const TextBox = ({
   text: string;
   setText: (text: string) => void;
 }) => {
+  const [language, setLanguage] = useState("none detected");
+
+  useEffect(() => {
+    const detect = async () => {
+      if (text) {
+        const sampleText = text.substring(0, 100);
+        const detectedLanguage = await detectLanguage(sampleText);
+        const languageName = getLanguageName(detectedLanguage);
+        setLanguage(languageName);
+      } else {
+        setLanguage("none detected");
+      }
+    };
+
+    if (type === "source") {
+      detect();
+    }
+  }, [text, type]);
+
   return (
     <div className="flex flex-col flex-1">
       <textarea
@@ -20,7 +42,7 @@ const TextBox = ({
         }
       ></textarea>
       <p className="my-2">
-        {type === "source" ? "Language: none detected" : "Language: English"}
+        {type === "source" ? `Language: ${language}` : "Language: English"}
       </p>
     </div>
   );
