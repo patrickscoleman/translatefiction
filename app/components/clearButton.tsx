@@ -6,7 +6,7 @@ const ClearButton = ({ handleClear }: { handleClear: () => void }) => {
       className={`px-8 py-4 bg-gray-800 text-white font-bold rounded-lg text-lg self-end mt-auto`}
       onClick={handleClear}
     >
-      CLEAR<span className="hidden ml-1 md:inline">⌘⇧⌫</span>
+      CLEAR<span className="hidden ml-1 md:inline">⌘⌥⌫</span>
     </button>
   );
 };

@@ -120,7 +120,7 @@ export default function Home() {
         handleTranslate();
       } else if (event.key === "\\" && event.metaKey) {
         handleExplain();
-      } else if (event.key === "Backspace" && event.shiftKey && event.metaKey) {
+      } else if (event.key === "Backspace" && event.altKey && event.metaKey) {
         handleClear();
       }
     };
