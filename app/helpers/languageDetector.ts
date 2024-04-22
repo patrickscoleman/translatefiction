@@ -1,4 +1,6 @@
-import { franc, francAll } from "franc";
+import { franc, francAll } from "franc-min";
+// franc-min detects fewer languages but is more accurate with shorter texts
+// import { franc, francAll } from "franc";
 import * as langs from "langs";
 
 export const detectLanguage = (text: string) => {

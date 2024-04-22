@@ -96,29 +96,29 @@ export default function Home() {
     sendMessage(message);
   }, [sourceText, sendMessage]);
 
-  const handleExplain = useCallback(async () => {
+  const handleExplain = useCallback(() => {
     setExplanation("");
 
-    const highlightLanguage = await detectLanguage(highlight);
-    const isHighlightNotEnglish = highlightLanguage !== "en";
+    // If the highlighted text is from the translation, provide an explanation in the source language
+    // Otherwise, provide an explanation in English
+    const shouldTranslateBackToSource = targetText.includes(highlight);
 
-    const message: Message = isHighlightNotEnglish
+    const message: Message = shouldTranslateBackToSource
       ? {
           id: nanoid(),
           messageType: "explanation",
           isSource: true,
-          text: `Please provide several possible English translations of the following ${sourceLanguage} word or phrase. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
+          text: `You must respond in ${sourceLanguage} ONLY. Please provide all possible ${sourceLanguage} translations of the following English word or phrase. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
         }
       : {
           id: nanoid(),
           messageType: "explanation",
           isSource: true,
-          text: `You must respond in ${sourceLanguage} ONLY. Please provide several possible ${sourceLanguage} translations of the following English word or phrase. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
+          text: `Please provide all possible English translations of the following ${sourceLanguage} word or phrase. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
         };
-    console.log("message", message);
 
     sendMessage(message);
-  }, [highlight, sourceLanguage, sendMessage]);
+  }, [highlight, sourceLanguage, targetText, sendMessage]);
 
   const handleClear = useCallback(() => {
     setSourceText("");

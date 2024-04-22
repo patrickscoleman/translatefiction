@@ -12,6 +12,7 @@
     "@tanstack/react-query": "^5.29.2",
     "eventsource-parser": "^1.1.2",
     "franc": "^6.2.0",
+    "franc-min": "^6.2.0",
     "langs": "^2.0.0",
     "nanoid": "^5.0.7",
     "next": "14.2.2",
