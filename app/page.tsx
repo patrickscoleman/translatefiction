@@ -8,6 +8,7 @@ import TextBox from "@/app/components/textBox";
 import ExplanationBox from "@/app/components/explanationBox";
 import TranslateButton from "@/app/components/translateButton";
 import ExplainButton from "@/app/components/explainButton";
+import ClearButton from "@/app/components/clearButton";
 import { Message } from "@/app/lib/validators/message";
 import { MessagesContext } from "@/app/context/messages";
 
@@ -84,6 +85,13 @@ export default function Home() {
     sendMessage(message);
   };
 
+  const handleClear = () => {
+    setSourceText("");
+    setTargetText("");
+    setHighlight("");
+    setExplanation("");
+  };
+
   useEffect(() => {
     const handleMouseUp = () => {
       if (typeof window !== "undefined") {
@@ -136,6 +144,7 @@ export default function Home() {
         </div>
       </div>
       <div className="flex justify-end space-x-4">
+        <ClearButton handleClear={handleClear} />
         <ExplainButton handleExplain={handleExplain} />
         <TranslateButton handleTranslate={handleTranslate} />
       </div>
