@@ -17,7 +17,7 @@ const ExplanationBox = ({
       placeholder={
         type === "highlight"
           ? "Highlight text..."
-          : "Explanation appears here..."
+          : "Various translations appear here..."
       }
     ></textarea>
   );

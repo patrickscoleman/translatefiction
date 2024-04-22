@@ -11,13 +11,18 @@ import ExplainButton from "@/app/components/explainButton";
 import ClearButton from "@/app/components/clearButton";
 import { Message } from "@/app/lib/validators/message";
 import { MessagesContext } from "@/app/context/messages";
+import {
+  detectLanguage,
+  getLanguageName,
+} from "@/app/helpers/languageDetector";
 
 export default function Home() {
   const [sourceText, setSourceText] = useState("");
+  const [sourceLanguage, setSourceLanguage] = useState("none detected");
   const [targetText, setTargetText] = useState("");
   const [highlight, setHighlight] = useState("");
   const [explanation, setExplanation] = useState("");
-  const abortControllerRef = useRef<AbortController | null>(null);
+
   const {
     messages,
     addMessage,
@@ -25,6 +30,8 @@ export default function Home() {
     updateMessage,
     setIsMessageUpdating,
   } = useContext(MessagesContext);
+
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const { mutate: sendMessage } = useMutation({
     mutationFn: async (message: Message) => {
@@ -89,18 +96,31 @@ export default function Home() {
     sendMessage(message);
   }, [sourceText, sendMessage]);
 
-  const handleExplain = useCallback(() => {
+  const handleExplain = useCallback(async () => {
     setExplanation("");
 
-    const message: Message = {
-      id: nanoid(),
-      messageType: "explanation",
-      isSource: true,
-      text: `Please provide all possible translations of the following word or phrase in English. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
-    };
+    const highlightLanguage = await detectLanguage(highlight);
+    const highlightLanguageName = getLanguageName(highlightLanguage);
+    console.log("highlightLanguageName", highlightLanguageName);
+    const isHighlightNotEnglish = highlightLanguageName !== "English";
+
+    const message: Message = isHighlightNotEnglish
+      ? {
+          id: nanoid(),
+          messageType: "explanation",
+          isSource: true,
+          text: `Please provide several possible English translations of the following ${sourceLanguage} word or phrase. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
+        }
+      : {
+          id: nanoid(),
+          messageType: "explanation",
+          isSource: true,
+          text: `You must respond in ${sourceLanguage} ONLY. Please provide several possible ${sourceLanguage} translations of the following English word or phrase. Only reply with the translations. Be concise. Don't use newlines. Word: ${highlight}`,
+        };
+    console.log("message", message);
 
     sendMessage(message);
-  }, [highlight, sendMessage]);
+  }, [highlight, sourceLanguage, sendMessage]);
 
   const handleClear = useCallback(() => {
     setSourceText("");
@@ -146,7 +166,13 @@ export default function Home() {
       <h1 className="text-4xl font-bold mb-8 self-start">Translate Fiction</h1>
       <div className="flex flex-1 flex-col lg:flex-row gap-4 mb-4 w-full">
         <div className="flex flex-1 flex-col w-full">
-          <TextBox type="source" text={sourceText} setText={setSourceText} />
+          <TextBox
+            type="source"
+            text={sourceText}
+            setText={setSourceText}
+            language={sourceLanguage}
+            setLanguage={setSourceLanguage}
+          />
           <ExplanationBox
             type="highlight"
             text={highlight}
